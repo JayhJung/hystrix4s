@@ -11,13 +11,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.functions.Action1;
 
-import com.netflix.config.ConfigurationManager;
-import com.netflix.hystrix.HystrixCommandKey;
-import com.netflix.hystrix.HystrixCommandMetrics;
-import com.netflix.hystrix.HystrixRequestLog;
-import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import com.ssa.hystrix.hello.CommandHelloWorld;
-import com.sun.media.jfxmedia.logging.Logger;
 
 
 public class CommandHelloWorldTest{
