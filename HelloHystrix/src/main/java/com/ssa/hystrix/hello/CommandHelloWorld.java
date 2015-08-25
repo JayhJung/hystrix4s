@@ -20,14 +20,6 @@ public class CommandHelloWorld extends HystrixCommand<String>{
     	System.out.println("Suppose it takes several seconds");
     	try {
     		System.out.println("Running for job: " + name);
-//			Thread.sleep(1000);
-			System.out.println(".");
-			
-//			Thread.sleep(1000);
-			System.out.println(".");
-			
-//			Thread.sleep(1000);
-			System.out.print(".");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
