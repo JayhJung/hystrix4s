@@ -11,9 +11,13 @@ public class HolydayRest{
 		CommandHolyday command = new CommandHolyday(url) {
 		
 			@Override
-			public void holydayRun() {
-				
-				response =  new GetRequest(HttpMethod.GET, url);
+			public void holydayRun() throws Exception{
+				System.out.println("## holydayRun(); INSIDE before");
+				(new GetRequest(HttpMethod.GET, url))
+						  .header("accept", "application/json")
+						  .queryString("delay", 3)
+						  .asJson();
+				System.out.println("## holydayRun(); INSIDE Afeter");
 			}
 			
 			@Override
@@ -21,8 +25,9 @@ public class HolydayRest{
 				//DO NOTHING
 			}
 		};
-		command.execute();
-
+		System.out.println("command.execute() BEFORE");
+		System.out.println(command.execute());
+		System.out.println("command.execute() AFTER");
 		return command.response;
 	}
 	
