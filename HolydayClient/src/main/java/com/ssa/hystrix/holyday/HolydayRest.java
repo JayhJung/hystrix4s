@@ -12,6 +12,7 @@ public class HolydayRest{
 		
 			@Override
 			public void holydayRun() {
+				
 				response =  new GetRequest(HttpMethod.GET, url);
 			}
 			
