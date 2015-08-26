@@ -60,6 +60,7 @@ public class TimeLineController {
 	    method.setRequestHeader("Content-Type","application/x-www-form-urlencoded; charset=utf-8");
 	    try {
 			client.executeMethod(method);
+			System.out.println(method.getResponseBody()+"=================") ;			
 		} catch (HttpException e) {
 			System.out.println("HttpException ");
 			e.printStackTrace();

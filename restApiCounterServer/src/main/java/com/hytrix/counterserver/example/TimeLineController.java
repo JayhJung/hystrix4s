@@ -19,6 +19,9 @@ import com.hytrix.counterserver.example.dto.TimeLine;
 public class TimeLineController {
 
 	List<Article> articles;
+	
+	//http://localhost:8080/restserver/rest/httpclient
+	//http://localhost:8090/countserver/rest/hello
 
 	public TimeLineController() {
 		articles = getDummyArticle();
