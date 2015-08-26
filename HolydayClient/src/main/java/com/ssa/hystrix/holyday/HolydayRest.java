@@ -6,9 +6,8 @@ import com.ssa.hystrix.hello.CommandHolyday;
 
 public class HolydayRest{
 	static GetRequest response = null;
-	
 
-	public static GetRequest get(String url) {
+	public static GetRequest get(final String url) {
 		
 		CommandHolyday command = new CommandHolyday(url) {
 		
@@ -27,7 +26,7 @@ public class HolydayRest{
 	}
 	
 	//TODO Extension Point : fallback을 계속해서 지정할 수 있도록 변경.
-	public static GetRequest get(String url, String fallbackUrl) {
+	public static GetRequest get(final String url, String fallbackUrl) {
 		
 		CommandHolyday command = new CommandHolyday(url) {
 		
