@@ -18,11 +18,11 @@ import com.ssa.hystrix.hello.CommandSimple;
 public class HolydayClientUnitTest{
 
 	private String url  = "http://localhost:8080/api/timeline/";
-	private HolydayRest rest;
+	private HolydayRest_1 rest;
 	
 	@Before
 	public void setup(){
-		rest = HolydayRest.getInstance();
+		rest = HolydayRest_1.getInstance();
 	}
     
     @Test
