@@ -5,9 +5,6 @@ package com.ssa.hystrix.holyday;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.util.concurrent.Future;
-
-import org.junit.Before;
 import org.junit.Test;
 
 import rx.Observable;

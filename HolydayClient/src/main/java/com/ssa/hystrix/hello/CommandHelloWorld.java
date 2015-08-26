@@ -7,8 +7,7 @@ import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 
-public abstract class CommandHelloWorld extends HystrixCommand<String>{
-
+public class CommandHelloWorld extends HystrixCommand<String>{
 	
 	private static String hystrixCommandGroupKey = "ExampleGroup";
 	
@@ -132,6 +131,7 @@ public abstract class CommandHelloWorld extends HystrixCommand<String>{
 				  .header("accept", "application/json")
 				  .queryString("delay", id)
 				  .asJson()
+				 /* .fallback(addr)
 				  .fallback(addr)
 				  .fallback(addr)
 				  .fallback(addr)
@@ -142,8 +142,7 @@ public abstract class CommandHelloWorld extends HystrixCommand<String>{
 				  .fallback(addr)
 				  .fallback(addr)
 				  .fallback(addr)
-				  .fallback(addr)
-				  .fallback(addr);
+				  .fallback(addr)*/;
 
 		System.out.println("Response:"+name + " | " +  jsonResponse.getBody());
 				
@@ -157,9 +156,7 @@ public abstract class CommandHelloWorld extends HystrixCommand<String>{
     }
     
     
-    
-    abstract String getFallback1();
-    
+
     @Override
     protected String getFallback() {
     	System.out.println("##" + name + " ## Fall back called!!");
