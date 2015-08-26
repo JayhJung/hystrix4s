@@ -1,9 +1,14 @@
 package com.example;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.methods.GetMethod;
+import org.springframework.boot.test.TestRestTemplate.HttpClientOption;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,13 +20,57 @@ import com.example.dto.Article;
 import com.example.dto.TimeLine;
 
 @RestController
-@RequestMapping("api/timeline")
+@RequestMapping("restserver/rest")
 public class TimeLineController {
 
 	List<Article> articles;
+	String ip = "localhost";
+	String port = "8090";
+	HttpClient client = new HttpClient();
 
 	public TimeLineController() {
 		articles = getDummyArticle();
+	}
+
+	@RequestMapping(value = "/httpclient", method = {RequestMethod.GET})
+	public TimeLine getBreeefArticles(@RequestParam(defaultValue = "0") int delay) {
+		TimeLine tl = new TimeLine();
+		tl.setArticleList(articles);
+		this.callCounterServer();  //CounterServer 호출 
+		giveDelay(delay);
+		return tl;
+	}
+	
+	@RequestMapping(value = "/holidayclient", method = {RequestMethod.GET})
+	public TimeLine getDetailArticles(@RequestParam(defaultValue = "0") int delay) {
+		TimeLine tl = new TimeLine();
+		tl.setArticleList(articles);
+		giveDelay(delay);
+		
+		this.callCounterServer();		//CounterServer 호출 
+
+		return tl;
+	}
+	
+	
+	private void callCounterServer() {
+		String url  = "http://"+ip+":" +port+"/countserver/rest/hello";
+		
+		GetMethod method = new GetMethod(url);		 
+	    method.setRequestHeader("Content-Type","application/x-www-form-urlencoded; charset=utf-8");
+	    try {
+			client.executeMethod(method);
+			System.out.println(method.getResponseBody()+"=================") ;			
+		} catch (HttpException e) {
+			System.out.println("HttpException ");
+			e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("IOException ");
+			e.printStackTrace();
+		}finally{
+			method.releaseConnection();
+		}
+		
 	}
 
 	@RequestMapping(value = "/", method = {RequestMethod.GET})
@@ -58,6 +107,7 @@ public class TimeLineController {
 		return id;
 
 	}
+	
 	@RequestMapping(value="/", method = RequestMethod.POST)
 	private long createArticle(@RequestBody Article article){
 		System.out.println("######## create an Article ###########");
@@ -105,6 +155,5 @@ public class TimeLineController {
 				e.printStackTrace();
 			}
 		
-	}
-
+	}	
 }
