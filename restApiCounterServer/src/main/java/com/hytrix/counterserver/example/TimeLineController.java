@@ -29,6 +29,7 @@ public class TimeLineController {
 
 	@RequestMapping(value = "/hello", method = {RequestMethod.GET})
 	public TimeLine getArticles(@RequestParam(defaultValue = "0") int delay) {
+		System.out.println("++++++++++++++++ hello ++++++++++++++++");
 		TimeLine tl = new TimeLine();
 		tl.setArticleList(articles);
 		giveDelay(delay);
