@@ -1,22 +1,13 @@
 package com.ssa.hystrix.hello;
 
-import static org.junit.Assert.assertEquals;
-
-import org.junit.Test;
-
-import rx.Observable;
-import rx.Observer;
-import rx.functions.Action1;
-
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandProperties;
-import com.ssa.hystrix.holyday.HolydayConfig;
 
-public class CommandHelloWorld extends HystrixCommand<String>{
+public abstract class CommandHelloWorld extends HystrixCommand<String>{
 
 	
 	private static String hystrixCommandGroupKey = "ExampleGroup";
@@ -59,8 +50,9 @@ public class CommandHelloWorld extends HystrixCommand<String>{
 	      this.name = name;
 	    }
     
+	  //hystrix.command.HystrixCommandKey.execution.isolation.thread.timeoutInMilliseconds
     public CommandHelloWorld(String name, int miliSec, int id) {
-      super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(name))
+      super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(hystrixCommandGroupKey))
               .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
             		  
             		  
@@ -73,23 +65,26 @@ public class CommandHelloWorld extends HystrixCommand<String>{
                        * This property sets the minimum number of requests in a rolling window 
                        * that will trip the circuit.
                        * */
-                      .withCircuitBreakerRequestVolumeThreshold(5)
+                      .withCircuitBreakerRequestVolumeThreshold(3)
                       
                       /*
                        * the amount of time, after tripping the circuit, 
                        * to reject requests before allowing attempts again to determine 
                        * if the circuit should again be closed*/
-                      .withCircuitBreakerSleepWindowInMilliseconds(5*1000) //5 sec
+                      .withCircuitBreakerSleepWindowInMilliseconds(5000) //5 sec
                       
                       /*
                        * his property, if true, forces the circuit breaker into a closed state 
                        * in which it will allow requests regardless of the error percentage.*/
                       //.withCircuitBreakerForceClosed(true)
                       
-                      
+                      .withCircuitBreakerErrorThresholdPercentage(50)
+                       
                      .withExecutionTimeoutInMilliseconds(miliSec)));
       this.name = name;
       this.id = id;
+      
+     // hystrix.command.CommandHelloWorld.execution.isolation.thread.timeoutInMilliseconds
     }
 
     public CommandHelloWorld(String name) {
@@ -131,14 +126,26 @@ public class CommandHelloWorld extends HystrixCommand<String>{
 
 		String addr = this.url + id;
 
-		System.out.println("run method called : url=" + addr);
+		System.out.println(name + "| run method called : url=" + addr);
 		try{
 		HttpResponse<JsonNode> jsonResponse = Unirest.get(addr)
 				  .header("accept", "application/json")
 				  .queryString("delay", id)
-				  .asJson();
+				  .asJson()
+				  .fallback(addr)
+				  .fallback(addr)
+				  .fallback(addr)
+				  .fallback(addr)
+				  .fallback(addr)
+				  .fallback(addr)
+				  .fallback(addr)
+				  .fallback(addr)
+				  .fallback(addr)
+				  .fallback(addr)
+				  .fallback(addr)
+				  .fallback(addr);
 
-		System.out.println(jsonResponse.getBody());
+		System.out.println("Response:"+name + " | " +  jsonResponse.getBody());
 				
 				
 		}catch(Exception e){
@@ -151,6 +158,7 @@ public class CommandHelloWorld extends HystrixCommand<String>{
     
     
     
+    abstract String getFallback1();
     
     @Override
     protected String getFallback() {
