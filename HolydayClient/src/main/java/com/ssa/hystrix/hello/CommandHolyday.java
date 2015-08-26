@@ -3,12 +3,14 @@ package com.ssa.hystrix.hello;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import com.mashape.unirest.request.GetRequest;
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 
 public abstract class CommandHolyday extends HystrixCommand<String>{
 	
 	private final String url;
+	public GetRequest response;
 	private static String getHystrixGroupKey(String url){
 		try {
 		MessageDigest md;
