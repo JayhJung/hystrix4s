@@ -21,7 +21,9 @@ public class TimeLineController {
 	List<Article> articles;
 	
 	//http://localhost:8080/restserver/rest/httpclient
+	//http://localhost:8080/restserver/rest/helloclient
 	//http://localhost:8090/countserver/rest/hello
+	//-Dserver.port=8090
 
 	public TimeLineController() {
 		articles = getDummyArticle();
