@@ -18,6 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.dto.Article;
 import com.example.dto.TimeLine;
+import com.example.hystrix.HolydayRestClient;
+import com.example.hystrix.HolydayRestEdited;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import com.mashape.unirest.http.Unirest;
+import com.mashape.unirest.http.exceptions.UnirestException;
 
 @RestController
 @RequestMapping("restserver/rest")
@@ -37,7 +43,6 @@ public class TimeLineController {
 		TimeLine tl = new TimeLine();
 		tl.setArticleList(articles);
 		this.callCounterServer();  //CounterServer 호출 
-		giveDelay(delay);
 		return tl;
 	}
 	
@@ -45,10 +50,11 @@ public class TimeLineController {
 	public TimeLine getDetailArticles(@RequestParam(defaultValue = "0") int delay) {
 		TimeLine tl = new TimeLine();
 		tl.setArticleList(articles);
-		giveDelay(delay);
 		
-		this.callCounterServer();		//CounterServer 호출 
+		this.callCounterServerViaHystrix();		//CounterServer 호출 
 
+		
+		
 		return tl;
 	}
 	
@@ -56,7 +62,17 @@ public class TimeLineController {
 	private void callCounterServer() {
 		String url  = "http://"+ip+":" +port+"/countserver/rest/hello";
 		
-		GetMethod method = new GetMethod(url);		 
+		
+		try {
+			Unirest.get(url).header("accept", "application/json")
+			.queryString("delay", 3).asJson();
+		} catch (UnirestException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("##Normal Client called:" + url );
+		
+		/*GetMethod method = new GetMethod(url);		 
 	    method.setRequestHeader("Content-Type","application/x-www-form-urlencoded; charset=utf-8");
 	    try {
 			client.executeMethod(method);
@@ -69,8 +85,19 @@ public class TimeLineController {
 			e.printStackTrace();
 		}finally{
 			method.releaseConnection();
-		}
+		}*/
 		
+	}
+	
+	private void callCounterServerViaHystrix() {
+		String url  = "http://"+ip+":" +port+"/countserver/rest/hello?delay=3";
+		System.out.println("##Hystrix Client called:" + url );
+    	HolydayRestClient client = HolydayRestEdited.get(url);
+    	client = client.header("accept", "application/json");
+    	
+    	HttpResponse<JsonNode> reponse = HolydayRestEdited.get(url)
+    			.header("accept", "application/json")
+    			.sendRequest();
 	}
 
 	@RequestMapping(value = "/", method = {RequestMethod.GET})

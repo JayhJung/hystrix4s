@@ -19,7 +19,7 @@ import com.hytrix.counterserver.example.dto.TimeLine;
 public class TimeLineController {
 
 	List<Article> articles;
-	
+	int i = 0;
 	//http://localhost:8080/restserver/rest/httpclient
 	//http://localhost:8080/restserver/rest/helloclient
 	//http://localhost:8090/countserver/rest/hello
@@ -30,11 +30,11 @@ public class TimeLineController {
 	}
 
 	@RequestMapping(value = "/hello", method = {RequestMethod.GET})
-	public TimeLine getArticles(@RequestParam(defaultValue = "0") int delay) {
-		System.out.println("++++++++++++++++ hello ++++++++++++++++");
+	public TimeLine getArticles(@RequestParam(defaultValue = "3") int delay) {
+		System.out.println("hello called:" + (++i));
 		TimeLine tl = new TimeLine();
 		tl.setArticleList(articles);
-		giveDelay(delay);
+		giveDelay(3);
 		return tl;
 	}
 	

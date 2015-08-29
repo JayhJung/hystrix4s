@@ -1,4 +1,4 @@
-package com.ssa.holyday.restclient;
+package com.ssa.hystrix.holyday;
 
 import java.util.Map;
 import java.util.regex.Matcher;

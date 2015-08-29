@@ -15,7 +15,7 @@ public class HolydayRest{
 				System.out.println("## holydayRun(); INSIDE before");
 				(new GetRequest(HttpMethod.GET, url))
 						  .header("accept", "application/json")
-						  .queryString("delay", 3)
+						  .queryString("delay", 1)
 						  .asJson();
 				System.out.println("## holydayRun(); INSIDE Afeter");
 			}

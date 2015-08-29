@@ -18,7 +18,7 @@ public class HolydayClientTest{
     	
     	GetRequest reponse = HolydayRest.get(url);
 				 
-    	System.out.println(reponse.getBody());
+    	//System.out.println(reponse.getBody());
     }
     
     
