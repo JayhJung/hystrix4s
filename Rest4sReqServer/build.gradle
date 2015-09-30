@@ -1,0 +1,36 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.2.6.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'spring-boot'
+
+jar {
+    baseName = 'gs-spring-boot'
+    version =  '0.1.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.apache.httpcomponents:httpclient:4.5.1")
+    compile("com.netflix.hystrix:hystrix-core:1.4.15")
+    testCompile("junit:junit")
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
