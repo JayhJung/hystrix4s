@@ -55,7 +55,26 @@
 			<artifactId>springloaded</artifactId>
 			<version>1.2.4.RELEASE</version>
 		</dependency>
+		
 
+		
+		<dependency>
+			<groupId>com.netflix.hystrix</groupId>
+			<artifactId>hystrix-core</artifactId>
+			<version>1.4.12</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2</version>
+		</dependency>
+				<dependency>
+			<groupId>com.mashape.unirest</groupId>
+			<artifactId>unirest-java</artifactId>
+			<version>1.4.6</version>
+		</dependency>
+		
 	</dependencies>
 	<build>
 		<plugins>
