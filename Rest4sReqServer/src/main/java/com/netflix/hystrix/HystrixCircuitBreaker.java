@@ -183,6 +183,7 @@ public interface HystrixCircuitBreaker {
                 	//결과로 circuit 을 열고/닫아주면 될 듯.
                 	requestHealthCheck();
                 	//그리고 false리턴.
+                	//return false;
                     return true;
                 }
             }
