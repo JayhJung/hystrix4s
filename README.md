@@ -15,8 +15,8 @@ Rest4sReqServer 에 hystrix 소스를 포함시켰습니다. (com.netflix.hystri
 
 HystrixCiruitBreaker.java 에 sysout 으로 상태 트래킹 할 수 있도록 해 놓았어요
 HystrixCiruitBreaker 의 동작으로 보니
-Circuit이 계속 닫혀있다가, HystrixCiruitBreaker.allowSingleTest() 가 true 일때, request가 나가서 한번 체크하고 돌아옵니다.
-이 부분에 체크로직을 추가하고 false를 리턴하면 내부 체크로직은 동작안할테니, healthCheck결과에 따라자체적으로 circuit을 제어해주면 될것 같아요
+Circuit이 계속 열려있다가, HystrixCiruitBreaker.allowSingleTest() 가 false에서 true로 바뀌는 시점에, request가 나가서 한번 체크하고 돌아옵니다.
+이 부분에 체크로직을 추가하고 false를 리턴하면 내부 request는 안나갈테니.., healthCheck결과에 따라자체적으로 circuit을 제어해주면 될것 같아요(자체 healthcheck결과 OK 이면 request 허용하고:return true, check결과 서버가Not OK 이면, request를 그냥먹는걸로:return false;) 
 
 healthcheck url 은 HystrixCommandProperties 에 하드코딩으로 해놓았고,
 requestHealthCheck() 쪽 쓰다가... 일단 커밋해놓을께요... 
