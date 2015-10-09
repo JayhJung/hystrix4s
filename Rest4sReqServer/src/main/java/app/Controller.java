@@ -12,6 +12,7 @@ import clients.Rest4sCall;
 public class Controller {
 
 	private String defaultUrl = "http://localhost:8080/";
+	private String healthCheckUrl = "http://localhost:8080/healthCheck";
 
 	@RequestMapping("/")
 	public String index() {

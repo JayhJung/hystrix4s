@@ -15,17 +15,15 @@ import type.RequestType;
 public class Rest4sCall {
 
 	public static String GetRequest(String url) throws Exception {
-		Rest4sCall req = new Rest4sCall();
-		Rest4sConfiguration conf = req.parseAnnotations();
+		Rest4sConfiguration conf = Rest4sCall.parseAnnotations();
 		CommandRest4s command = new CommandRest4s(url, RequestType.GET, conf);
 		String result = command.execute();
 		return result;
 	}
 
 	public static String PostRequest(String url) throws Exception {
-		Rest4sCall req = new Rest4sCall();
-		Rest4sConfiguration conf = req.parseAnnotations();
-		req.parseAnnotations();
+//		Rest4sCall req = new Rest4sCall();
+		Rest4sConfiguration conf = Rest4sCall.parseAnnotations();
 		CommandRest4s command = new CommandRest4s(url, RequestType.POST, conf);
 		String result = command.execute();
 		return result;
