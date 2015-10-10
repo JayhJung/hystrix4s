@@ -15,11 +15,18 @@
  */
 package com.netflix.hystrix;
 
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import clients.ApacheHttpCall;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import com.netflix.hystrix.HystrixCommandMetrics.HealthCounts;
 
@@ -181,27 +188,18 @@ public interface HystrixCircuitBreaker {
                 	//여기서 true가 리턴되면 test용으로 single request 가 허용됩니다. 
                 	//TODO 여기에서 별도 health check를 따로 하고
                 	//결과로 circuit 을 열고/닫아주면 될 듯.
-                	requestHealthCheck();
+                	boolean targetStatusOk = true;
+                	if(this.properties.healthCheckURL != null && !"".equals(this.properties.healthCheckURL)) {
+                		targetStatusOk = requestHealthCheck();
+                	}
+                	
                 	//그리고 false리턴.
                 	//return false;
-                    return true;
+                    return targetStatusOk;
                 }
             }
             System.out.println("## allowSingleTest() Called!! - inside #3 returning false");
             return false;
-        }
-        
-        private void requestHealthCheck(){
-        	try {
-				ApacheHttpCall.GetRequest(this.properties.healthCheckURL);
-			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        	
-        	//
-        	//Circuit control...
-        	
         }
 
         @Override
@@ -241,6 +239,48 @@ public interface HystrixCircuitBreaker {
                 	return true;
                 }
             }
+        }
+        
+        // TODO : 호출하는 부분을 hystrix 내의 호출 모듈을 사용해야 하지 않을까?
+        // TODO : Exception Handling 처리 로직 재확인
+        private boolean requestHealthCheck(){
+        	boolean targetStatusOk = true;     		
+    		HttpGet httpGet = new HttpGet(this.properties.healthCheckURL);
+    		System.out.println("Executing request " + httpGet.getRequestLine());
+    		
+    		CloseableHttpClient httpClient = HttpClients.createDefault();
+    		CloseableHttpResponse response = null;
+    		try {
+    			response = httpClient.execute(httpGet);
+    			int statusCode = response.getStatusLine().getStatusCode();
+    			if (statusCode >= 200 && statusCode < 300) {
+    				targetStatusOk = true;
+    			} else {
+    				targetStatusOk = false;
+    			}
+    		} catch (Exception e) {    			
+    			
+    			e.printStackTrace();
+    		} finally {
+    			if(response != null) {
+	    			try {
+	    				response.close();
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+    			}
+    			
+    			if(httpClient != null) {
+	    			try {
+	    				httpClient.close();
+					} catch (Exception e2) {
+						e2.printStackTrace();
+					}
+    			}    			
+    		}
+        	
+        	return targetStatusOk;
+        	
         }
 
     }

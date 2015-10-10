@@ -53,6 +53,10 @@ public class Rest4sCall {
 						Rest4sConf myAnnotation = (Rest4sConf) annoItem;
 						conf.setFallbackMethodName(myAnnotation.fallback());
 						conf.setTimeOutSec(myAnnotation.timeoutSec());
+						conf.setSleepWindowMilliSec(myAnnotation.sleepWindowMilliSec());
+						conf.setThreasholdVolume(myAnnotation.threasholdVolume());
+						conf.setThreasholdErrorPercentage(myAnnotation.threasholdErrorPercentage());
+						conf.setHealthCheckUrl(myAnnotation.healthCheckUrl());
 						System.out.println("### " + myAnnotation.timeoutSec());
 					}
 				}
