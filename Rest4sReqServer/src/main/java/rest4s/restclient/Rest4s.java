@@ -1,29 +1,55 @@
 package rest4s.restclient;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+
 import rest4s.config.RequestType;
 import rest4s.config.Rest4sHystrixConfiguration;
 import rest4s.config.annotation.Rest4sConf;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import org.springframework.beans.factory.config.RuntimeBeanNameReference;
-
 public class Rest4s {
 
-	public static String GetRequest(String url) throws Exception {
+	/**
+	 * 
+	 * simple get method call request only with target url
+	 * without any header, cookies, etc, and return response data 
+	 * converted as string.
+	 * 
+	 */
+	public static String simpleGet(String url) throws Exception {
 		Rest4sHystrixConfiguration conf = Rest4s.parseAnnotations();
 		Rest4sHystrixCommand command = new Rest4sHystrixCommand(url, RequestType.GET, conf);
 		String result = command.execute();
+		
 		return result;
 	}
 
-	public static String PostRequest(String url) throws Exception {
-//		Rest4sCall req = new Rest4sCall();
+	/**
+	 * 
+	 * simple post method call request only with target url and empty body
+	 * without any header, cookies, etc, and return response data 
+	 * converted as string.
+	 * 
+	 */
+	public static String simplePost(String url) throws Exception {
 		Rest4sHystrixConfiguration conf = Rest4s.parseAnnotations();
 		Rest4sHystrixCommand command = new Rest4sHystrixCommand(url, RequestType.POST, conf);
 		String result = command.execute();
+		
+		return result;
+	}
+
+	/**
+	 * 
+	 * call request with requestSettings including headers, cookies, query
+	 * 
+	 */
+	public static String callRequest(RequestSettings requestSettings) {
+
+		Rest4sHystrixConfiguration conf = Rest4s.parseAnnotations();
+		Rest4sHystrixCommand command = new Rest4sHystrixCommand(requestSettings, conf);
+		String result = command.execute();
+		
 		return result;
 	}
 
@@ -37,7 +63,6 @@ public class Rest4s {
 		try {
 			conf.setCallerClass(Class.forName(stacks[2].getClassName()));
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

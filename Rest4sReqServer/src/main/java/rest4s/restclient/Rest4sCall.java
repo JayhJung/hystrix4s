@@ -12,15 +12,13 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import rest4s.config.RequestType;
-
-public class HttpClientCall {
+public class Rest4sCall {
 	
-	private static CloseableHttpClient httpclient = HttpClients.createDefault();;
-	private static ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
+	private CloseableHttpClient httpclient = HttpClients.createDefault();
+	
+	private ResponseHandler<String> simpleResponseHandler = new ResponseHandler<String>() {
 		@Override
-		public String handleResponse(final HttpResponse response)
-				throws ClientProtocolException, IOException {
+		public String handleResponse(final HttpResponse response) throws ClientProtocolException, IOException {
 			int status = response.getStatusLine().getStatusCode();
 			if (status >= 200 && status < 300) {
 				HttpEntity entity = response.getEntity();
@@ -34,12 +32,12 @@ public class HttpClientCall {
 
 	};
 	
-	public static String GetRequest(String url) throws Exception{
+	public String GetRequest(String url) throws Exception{
 		HttpGet httpGet = new HttpGet(url);
 		System.out.println("Executing request " + httpGet.getRequestLine());
 		String responseBody = null;
 		try {
-			responseBody = httpclient.execute(httpGet, responseHandler);
+			responseBody = httpclient.execute(httpGet, simpleResponseHandler);
 		} catch (ClientProtocolException e) {
 			httpclient.close();
 			e.printStackTrace();
@@ -54,12 +52,12 @@ public class HttpClientCall {
 	}
 	
 	
-	public static String PostRequest(String url) throws Exception{
+	public String PostRequest(String url) throws Exception{
 		HttpPost httpPost = new HttpPost(url);
 		System.out.println("Executing request " + httpPost.getRequestLine());
 		String responseBody = null;
 		try {
-			responseBody = httpclient.execute(httpPost, responseHandler);
+			responseBody = httpclient.execute(httpPost, simpleResponseHandler);
 		} catch (ClientProtocolException e) {
 			httpclient.close();
 			e.printStackTrace();

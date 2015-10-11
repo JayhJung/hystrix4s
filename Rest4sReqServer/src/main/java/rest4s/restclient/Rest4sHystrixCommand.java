@@ -5,12 +5,12 @@ import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import rest4s.config.RequestType;
-import rest4s.config.Rest4sHystrixConfiguration;
-
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandProperties;
+
+import rest4s.config.RequestType;
+import rest4s.config.Rest4sHystrixConfiguration;
 
 public class Rest4sHystrixCommand extends HystrixCommand<String>{
 
@@ -74,14 +74,40 @@ public class Rest4sHystrixCommand extends HystrixCommand<String>{
       System.out.println(conf.toString());
 	}
 	
+	public Rest4sHystrixCommand(RequestSettings requestSettings, Rest4sHystrixConfiguration conf) {
+		super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(getHystrixGroupKey(requestSettings.getUrl())))
+	              .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
+	                      //This property determines whether a circuit breaker will be used 
+	                      //to track health and to short-circuit requests if it trips.
+	                      .withCircuitBreakerEnabled(true)
+	                      /*
+	                       * This property sets the minimum number of requests in a rolling window 
+	                       * that will trip the circuit.
+	                       * */
+	                      .withCircuitBreakerRequestVolumeThreshold(3)
+	                      /*
+	                       * the amount of time, after tripping the circuit, 
+	                       * to reject requests before allowing attempts again to determine 
+	                       * if the circuit should again be closed*/
+	                      .withCircuitBreakerSleepWindowInMilliseconds(5000) //5 sec
+	                      /*
+	                       * his property, if true, forces the circuit breaker into a closed state 
+	                       * in which it will allow requests regardless of the error percentage.*/
+	                      //.withCircuitBreakerForceClosed(true)
+	                      .withCircuitBreakerErrorThresholdPercentage(50)
+	                     .withExecutionTimeoutInMilliseconds(conf.getTimeOutSec()*1000)));
+      this.conf = conf;
+      System.out.println(conf.toString());
+	}
+	
 	
 	@Override
 	protected String run() throws Exception {
 		switch (reqType) {
 		case GET:
-			return HttpClientCall.GetRequest(url);
+			return new Rest4sCall().GetRequest(url);
 		case POST:
-			return HttpClientCall.PostRequest(url);
+			return new Rest4sCall().PostRequest(url);
 		default:
 			return null;
 		}
