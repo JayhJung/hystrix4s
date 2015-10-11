@@ -1,25 +1,25 @@
-package hystrix;
+package rest4s.restclient;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import type.RequestType;
-import clients.ApacheHttpCall;
+import rest4s.config.RequestType;
+import rest4s.config.Rest4sHystrixConfiguration;
 
 import com.netflix.hystrix.HystrixCommand;
 import com.netflix.hystrix.HystrixCommandGroupKey;
 import com.netflix.hystrix.HystrixCommandProperties;
 
-public class CommandRest4s extends HystrixCommand<String>{
+public class Rest4sHystrixCommand extends HystrixCommand<String>{
 
 	private String url;
 	private RequestType reqType;
 	Class noparams[] = {};
-	private Rest4sConfiguration conf= null;
+	private Rest4sHystrixConfiguration conf= null;
 	
-	public CommandRest4s(String url, RequestType reqType) {
+	public Rest4sHystrixCommand(String url, RequestType reqType) {
 		super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(getHystrixGroupKey(url)))
 	              .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
 	                      //This property determines whether a circuit breaker will be used 
@@ -46,7 +46,7 @@ public class CommandRest4s extends HystrixCommand<String>{
 //      System.out.println("Contructor called!!!");
 	}
 	
-	public CommandRest4s(String url, RequestType reqType, Rest4sConfiguration conf) {
+	public Rest4sHystrixCommand(String url, RequestType reqType, Rest4sHystrixConfiguration conf) {
 		super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(getHystrixGroupKey(url)))
 	              .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
 	                      //This property determines whether a circuit breaker will be used 
@@ -79,9 +79,9 @@ public class CommandRest4s extends HystrixCommand<String>{
 	protected String run() throws Exception {
 		switch (reqType) {
 		case GET:
-			return ApacheHttpCall.GetRequest(url);
+			return HttpClientCall.GetRequest(url);
 		case POST:
-			return ApacheHttpCall.PostRequest(url);
+			return HttpClientCall.PostRequest(url);
 		default:
 			return null;
 		}

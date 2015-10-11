@@ -1,8 +1,6 @@
-package hystrix;
+package rest4s.config;
 
-import java.lang.reflect.Method;
-
-public class Rest4sConfiguration {
+public class Rest4sHystrixConfiguration {
 
 	private String fallbackMethodName = null;
 	private int timeOutSec = 5;
@@ -56,10 +54,13 @@ public class Rest4sConfiguration {
 	public void setCallerClass(Class<?> callerClass) {
 		this.callerClass = callerClass;
 	}
+	
 	@Override
 	public String toString() {
 		return "Rest4sConfiguration [fallbackMethodName=" + fallbackMethodName
 				+ ", timeOutSec=" + timeOutSec + ", callerClass=" + callerClass
+				+ ", sleepWindowMilliSec=" + sleepWindowMilliSec + ", threasholdVolume=" + threasholdVolume
+				+ ", threasholdErrorPercentage=" + threasholdErrorPercentage + ", healthCheckUrl=" + healthCheckUrl
 				+ "]";
 	}
 	

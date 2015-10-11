@@ -1,4 +1,4 @@
-package annotation;
+package rest4s.config.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

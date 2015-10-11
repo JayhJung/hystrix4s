@@ -1,7 +1,9 @@
-/annotation/
-/app/
-/clients/
+/application.properties
 /com/
 /hystrix/
 /test/
 /type/
+/app/
+/clients/
+/rest4s/
+/server/

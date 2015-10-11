@@ -1,7 +1,8 @@
-package clients;
+package rest4s.restclient;
 
-import hystrix.CommandRest4s;
-import hystrix.Rest4sConfiguration;
+import rest4s.config.RequestType;
+import rest4s.config.Rest4sHystrixConfiguration;
+import rest4s.config.annotation.Rest4sConf;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
@@ -9,29 +10,26 @@ import java.lang.reflect.Method;
 
 import org.springframework.beans.factory.config.RuntimeBeanNameReference;
 
-import annotation.Rest4sConf;
-import type.RequestType;
-
-public class Rest4sCall {
+public class Rest4s {
 
 	public static String GetRequest(String url) throws Exception {
-		Rest4sConfiguration conf = Rest4sCall.parseAnnotations();
-		CommandRest4s command = new CommandRest4s(url, RequestType.GET, conf);
+		Rest4sHystrixConfiguration conf = Rest4s.parseAnnotations();
+		Rest4sHystrixCommand command = new Rest4sHystrixCommand(url, RequestType.GET, conf);
 		String result = command.execute();
 		return result;
 	}
 
 	public static String PostRequest(String url) throws Exception {
 //		Rest4sCall req = new Rest4sCall();
-		Rest4sConfiguration conf = Rest4sCall.parseAnnotations();
-		CommandRest4s command = new CommandRest4s(url, RequestType.POST, conf);
+		Rest4sHystrixConfiguration conf = Rest4s.parseAnnotations();
+		Rest4sHystrixCommand command = new Rest4sHystrixCommand(url, RequestType.POST, conf);
 		String result = command.execute();
 		return result;
 	}
 
-	private static Rest4sConfiguration parseAnnotations() {
+	private static Rest4sHystrixConfiguration parseAnnotations() {
 		StackTraceElement[] stacks = new Throwable().getStackTrace();
-		Rest4sConfiguration conf = new Rest4sConfiguration();
+		Rest4sHystrixConfiguration conf = new Rest4sHystrixConfiguration();
 		if (stacks == null || stacks.length <= 1) {
 			throw new RuntimeException();
 		}

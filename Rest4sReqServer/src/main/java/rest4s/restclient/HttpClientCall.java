@@ -1,4 +1,4 @@
-package clients;
+package rest4s.restclient;
 
 import java.io.IOException;
 
@@ -12,9 +12,9 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import type.RequestType;
+import rest4s.config.RequestType;
 
-public class ApacheHttpCall {
+public class HttpClientCall {
 	
 	private static CloseableHttpClient httpclient = HttpClients.createDefault();;
 	private static ResponseHandler<String> responseHandler = new ResponseHandler<String>() {
