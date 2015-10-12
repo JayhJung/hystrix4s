@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 public @interface Rest4sConf {
 	public String fallback() default "getFallback";
 	
-	public int timeoutSec() default 5;
+	public int timeoutMilliSec() default 5000;
 	
 	public int sleepWindowMilliSec() default 5000;
 	

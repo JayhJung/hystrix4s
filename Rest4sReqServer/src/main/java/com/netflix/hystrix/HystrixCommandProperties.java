@@ -61,7 +61,7 @@ public abstract class HystrixCommandProperties {
     private static final Integer default_metricsRollingPercentileBucketSize = 100; // default to 100 values max per bucket
     private static final Integer default_metricsHealthSnapshotIntervalInMilliseconds = 500; // default to 500ms as max frequency between allowing snapshots of health (error percentage etc)
 
-    final String healthCheckURL =  "http://localhost:8080/healthCheck";
+    private static final String default_healthCheckUrl = "/health";
     
     @SuppressWarnings("unused") private final HystrixCommandKey key;
     private final HystrixProperty<Integer> circuitBreakerRequestVolumeThreshold; // number of requests that must be made within a statisticalWindow before open/close decisions are made using stats
@@ -87,6 +87,8 @@ public abstract class HystrixCommandProperties {
     private final HystrixProperty<Integer> metricsHealthSnapshotIntervalInMilliseconds; // time between health snapshots
     private final HystrixProperty<Boolean> requestLogEnabled; // whether command request logging is enabled.
     private final HystrixProperty<Boolean> requestCacheEnabled; // Whether request caching is enabled.
+    
+    private final HystrixProperty<String> healthCheckUrl; // healthcheck url to test when circuit is open and sleepwindow passed by configured time.
 
     
     /**
@@ -138,6 +140,8 @@ public abstract class HystrixCommandProperties {
 
         // threadpool doesn't have a global override, only instance level makes sense
         this.executionIsolationThreadPoolKeyOverride = asProperty(new DynamicStringProperty(propertyPrefix + ".command." + key.name() + ".threadPoolKeyOverride", null));
+        
+        this.healthCheckUrl = getProperty(propertyPrefix, key, "circuitBreaker.healthCheckUrl", builder.getHealthCheckUrl(), default_healthCheckUrl);
     }
 
     /**
@@ -413,6 +417,15 @@ public abstract class HystrixCommandProperties {
     public HystrixProperty<Boolean> requestLogEnabled() {
         return requestLogEnabled;
     }
+    
+    /**
+     * Whether {@link HystrixCommand} execution and events should be logged to {@link HystrixRequestLog}.
+     * 
+     * @return {@code HystrixProperty<Boolean>}
+     */
+    public HystrixProperty<String> healthCheckUrl() {
+        return healthCheckUrl;
+    }
 
     private static HystrixProperty<Boolean> getProperty(String propertyPrefix, HystrixCommandKey key, String instanceProperty, Boolean builderOverrideValue, Boolean defaultValue) {
         return asProperty(new HystrixPropertiesChainedArchaiusProperty.BooleanProperty(
@@ -534,6 +547,7 @@ public abstract class HystrixCommandProperties {
         private Integer metricsRollingStatisticalWindowBuckets = null;
         private Boolean requestCacheEnabled = null;
         private Boolean requestLogEnabled = null;
+        private String healthCheckUrl = null;
 
         /* package */ Setter() {
         }
@@ -632,6 +646,10 @@ public abstract class HystrixCommandProperties {
 
         public Boolean getRequestLogEnabled() {
             return requestLogEnabled;
+        }
+
+        public String getHealthCheckUrl() {
+            return healthCheckUrl;
         }
 
         public Setter withCircuitBreakerEnabled(boolean value) {

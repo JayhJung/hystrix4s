@@ -41,7 +41,7 @@ public class Rest4s {
 
 	/**
 	 * 
-	 * call request with requestSettings including headers, cookies, query
+	 * call request with requestSettings including headers, cookies, queryString
 	 * 
 	 */
 	public static String callRequest(RequestSettings requestSettings) {
@@ -75,12 +75,12 @@ public class Rest4s {
 					if (annoItem instanceof Rest4sConf) {
 						Rest4sConf myAnnotation = (Rest4sConf) annoItem;
 						conf.setFallbackMethodName(myAnnotation.fallback());
-						conf.setTimeOutSec(myAnnotation.timeoutSec());
+						conf.setTimeOutMilliSec(myAnnotation.timeoutMilliSec());
 						conf.setSleepWindowMilliSec(myAnnotation.sleepWindowMilliSec());
 						conf.setThreasholdVolume(myAnnotation.threasholdVolume());
 						conf.setThreasholdErrorPercentage(myAnnotation.threasholdErrorPercentage());
 						conf.setHealthCheckUrl(myAnnotation.healthCheckUrl());
-						System.out.println("### " + myAnnotation.timeoutSec());
+						System.out.println("### " + myAnnotation.timeoutMilliSec());
 					}
 				}
 			}

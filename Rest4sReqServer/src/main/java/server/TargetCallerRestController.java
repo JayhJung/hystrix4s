@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import rest4s.config.annotation.Rest4sConf;
-import rest4s.restclient.Rest4sCall;
 import rest4s.restclient.Rest4s;
+import rest4s.restclient.Rest4sCall;
 
 
 @RestController
@@ -24,52 +24,52 @@ public class TargetCallerRestController {
 	@RequestMapping(value = "http", method = RequestMethod.GET)
 	public String requestWithHttpClientGet() throws Exception {
 		System.out.println("http Get reqeust called!");
-		return new Rest4sCall().GetRequest(defaultUrl);
+		return new Rest4sCall().getRequest(defaultUrl);
 
 	}
 
 	@RequestMapping(value = "http", method = RequestMethod.POST)
 	public String requestWithHttpClientPost() throws Exception {
 		System.out.println("http POST reqeust called!");
-		return new Rest4sCall().PostRequest(defaultUrl);
+		return new Rest4sCall().postRequest(defaultUrl);
 	}
 	
 	
 	@RequestMapping(value = "hystrix1", method=RequestMethod.GET)
-	@Rest4sConf(fallback="getReqFallBack", timeoutSec=1)
+	@Rest4sConf(fallback="getReqFallBack", timeoutMilliSec=1000, healthCheckUrl="/health")
 	public String reqeustWithHystrixClientGet1() throws Exception{
 		System.out.println("hystrix GET reqeust called!");
 		return Rest4s.simpleGet(defaultUrl);
 	}
 	
 	@RequestMapping(value = "hystrix2", method=RequestMethod.GET)
-	@Rest4sConf(fallback="getReqFallBack", timeoutSec=2)
+	@Rest4sConf(fallback="getReqFallBack", timeoutMilliSec=2000)
 	public String reqeustWithHystrixClientGet2() throws Exception{
 		System.out.println("hystrix GET reqeust called!");
 		return Rest4s.simpleGet(defaultUrl);
 	}
 	
 	@RequestMapping(value = "hystrix3", method=RequestMethod.GET)
-	@Rest4sConf(fallback="getReqFallBack", timeoutSec=3)
+	@Rest4sConf(fallback="getReqFallBack", timeoutMilliSec=3000)
 	public String reqeustWithHystrixClientGet3() throws Exception{
 		System.out.println("hystrix GET reqeust called!");
 		return Rest4s.simpleGet(defaultUrl);
 	}
 	@RequestMapping(value = "hystrix4", method=RequestMethod.GET)
-	@Rest4sConf(fallback="getReqFallBack", timeoutSec=4)
+	@Rest4sConf(fallback="getReqFallBack", timeoutMilliSec=4000)
 	public String reqeustWithHystrixClientGet4() throws Exception{
 		System.out.println("hystrix GET reqeust called!");
 		return Rest4s.simpleGet(defaultUrl);
 	}
 	
 	@RequestMapping(value = "hystrix5", method=RequestMethod.GET)
-	@Rest4sConf(fallback="getReqFallBack", timeoutSec=5)
+	@Rest4sConf(fallback="getReqFallBack", timeoutMilliSec=5000)
 	public String reqeustWithHystrixClientGet5() throws Exception{
 		System.out.println("hystrix GET reqeust called!");
 		return Rest4s.simpleGet(defaultUrl);
 	}
 	@RequestMapping(value = "hystrix6", method=RequestMethod.GET)
-	@Rest4sConf(fallback="getReqFallBack", timeoutSec=6)
+	@Rest4sConf(fallback="getReqFallBack", timeoutMilliSec=6000)
 	public String reqeustWithHystrixClientGet6() throws Exception{
 		System.out.println("hystrix GET reqeust called!");
 		return Rest4s.simpleGet(defaultUrl);

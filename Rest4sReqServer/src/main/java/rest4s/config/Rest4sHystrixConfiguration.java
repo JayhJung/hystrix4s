@@ -3,11 +3,11 @@ package rest4s.config;
 public class Rest4sHystrixConfiguration {
 
 	private String fallbackMethodName = null;
-	private int timeOutSec = 5;
+	private int timeOutMilliSec = 5000;
 	private int sleepWindowMilliSec = 5000;
 	private int threasholdVolume = 10;
 	private int threasholdErrorPercentage = 50;
-	private String healthCheckUrl = "";
+	private String healthCheckUrl = null;
 	
 	private Class<?> callerClass = null;
 	
@@ -18,11 +18,11 @@ public class Rest4sHystrixConfiguration {
 	public void setFallbackMethodName(String fallbackMethodName) {
 		this.fallbackMethodName = fallbackMethodName;
 	}
-	public int getTimeOutSec() {
-		return timeOutSec;
+	public int getTimeOutMilliSec() {
+		return timeOutMilliSec;
 	}
-	public void setTimeOutSec(int timeOutSec) {
-		this.timeOutSec = timeOutSec;
+	public void setTimeOutMilliSec(int timeOutMilliSec) {
+		this.timeOutMilliSec = timeOutMilliSec;
 	}	
 	public int getSleepWindowMilliSec() {
 		return sleepWindowMilliSec;
@@ -58,7 +58,7 @@ public class Rest4sHystrixConfiguration {
 	@Override
 	public String toString() {
 		return "Rest4sConfiguration [fallbackMethodName=" + fallbackMethodName
-				+ ", timeOutSec=" + timeOutSec + ", callerClass=" + callerClass
+				+ ", timeOutMilliSec=" + timeOutMilliSec + ", callerClass=" + callerClass
 				+ ", sleepWindowMilliSec=" + sleepWindowMilliSec + ", threasholdVolume=" + threasholdVolume
 				+ ", threasholdErrorPercentage=" + threasholdErrorPercentage + ", healthCheckUrl=" + healthCheckUrl
 				+ "]";

@@ -189,7 +189,7 @@ public interface HystrixCircuitBreaker {
                 	//TODO 여기에서 별도 health check를 따로 하고
                 	//결과로 circuit 을 열고/닫아주면 될 듯.
                 	boolean targetStatusOk = true;
-                	if(this.properties.healthCheckURL != null && !"".equals(this.properties.healthCheckURL)) {
+                	if(this.properties.healthCheckUrl() != null && !"".equals(this.properties.healthCheckUrl())) {
                 		targetStatusOk = requestHealthCheck();
                 	}
                 	
@@ -245,7 +245,7 @@ public interface HystrixCircuitBreaker {
         // TODO : Exception Handling 처리 로직 재확인
         private boolean requestHealthCheck(){
         	boolean targetStatusOk = true;     		
-    		HttpGet httpGet = new HttpGet(this.properties.healthCheckURL);
+    		HttpGet httpGet = new HttpGet(this.properties.healthCheckUrl().toString());
     		System.out.println("Executing request " + httpGet.getRequestLine());
     		
     		CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -258,7 +258,8 @@ public interface HystrixCircuitBreaker {
     			} else {
     				targetStatusOk = false;
     			}
-    		} catch (Exception e) {    			
+    		} catch (Exception e) {   
+				targetStatusOk = false; 			
     			
     			e.printStackTrace();
     		} finally {
