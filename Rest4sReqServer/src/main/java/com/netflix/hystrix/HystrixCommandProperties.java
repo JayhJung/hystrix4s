@@ -771,6 +771,11 @@ public abstract class HystrixCommandProperties {
             return this;
         }
 
+        public Setter withHealthCheckUrl(String value) {
+            this.healthCheckUrl = value;
+            return this;
+        }
+
     }
 
 

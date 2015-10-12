@@ -15,18 +15,16 @@
  */
 package com.netflix.hystrix;
 
-import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.netflix.hystrix.HystrixCommandMetrics.HealthCounts;
 
@@ -130,6 +128,8 @@ public interface HystrixCircuitBreaker {
      * @ThreadSafe
      */
     /* package */static class HystrixCircuitBreakerImpl implements HystrixCircuitBreaker {
+    	
+    	private static final Logger logger = LoggerFactory.getLogger(HystrixCircuitBreakerImpl.class);
         private final HystrixCommandProperties properties;
         private final HystrixCommandMetrics metrics;
 
@@ -155,36 +155,36 @@ public interface HystrixCircuitBreaker {
 
         @Override
         public boolean allowRequest() {
-//        	System.out.println("## allowRequest() Called!! currently circuite is.." +  (isOpen()?"OPEN":"CLOSED"));
+//        	logger.debug("## allowRequest() Called!! currently circuite is.." +  (isOpen()?"OPEN":"CLOSED"));
             if (properties.circuitBreakerForceOpen().get()) {
-            	System.out.println("properties.circuitBreakerForceOpen().get() is TRUE // return false");
+            	logger.debug("properties.circuitBreakerForceOpen().get() is TRUE // return false");
                 // properties have asked us to force the circuit open so we will allow NO requests
                 return false;
             }
             if (properties.circuitBreakerForceClosed().get()) {
-            	System.out.println("properties.circuitBreakerForceClosed().get() is TRUE //return true");
+            	logger.debug("properties.circuitBreakerForceClosed().get() is TRUE //return true");
                 // we still want to allow isOpen() to perform it's calculations so we simulate normal behavior
                 isOpen();
                 // properties have asked us to ignore errors so we will ignore the results of isOpen and just allow all traffic through
                 return true;
             }
-            System.out.println("!isOpen() || allowSingleTest() returned");
+            logger.debug("!isOpen() || allowSingleTest() returned");
             return !isOpen() || allowSingleTest();
         }
 
         public boolean allowSingleTest() {
-        	System.out.println("## allowSingleTest() Called!!");
+        	logger.debug("## allowSingleTest() Called!!");
             long timeCircuitOpenedOrWasLastTested = circuitOpenedOrLastTestedTime.get();
             // 1) if the circuit is open
             // 2) and it's been longer than 'sleepWindow' since we opened the circuit
             if (circuitOpen.get() && System.currentTimeMillis() > timeCircuitOpenedOrWasLastTested + properties.circuitBreakerSleepWindowInMilliseconds().get()) {
-            	System.out.println("## allowSingleTest() Called!! - inside #1");
+            	logger.debug("## allowSingleTest() Called!! - inside #1");
             	// We push the 'circuitOpenedTime' ahead by 'sleepWindow' since we have allowed one request to try.
                 // If it succeeds the circuit will be closed, otherwise another singleTest will be allowed at the end of the 'sleepWindow'.
                 if (circuitOpenedOrLastTestedTime.compareAndSet(timeCircuitOpenedOrWasLastTested, System.currentTimeMillis())) {
                     // if this returns true that means we set the time so we'll return true to allow the singleTest
                     // if it returned false it means another thread raced us and allowed the singleTest before we did
-                	System.out.println("## allowSingleTest() Called!! - inside #2 returning true");
+                	logger.debug("## allowSingleTest() Called!! - inside #2 returning true");
                 	//여기서 true가 리턴되면 test용으로 single request 가 허용됩니다. 
                 	//TODO 여기에서 별도 health check를 따로 하고
                 	//결과로 circuit 을 열고/닫아주면 될 듯.
@@ -198,16 +198,16 @@ public interface HystrixCircuitBreaker {
                     return targetStatusOk;
                 }
             }
-            System.out.println("## allowSingleTest() Called!! - inside #3 returning false");
+            logger.debug("## allowSingleTest() Called!! - inside #3 returning false");
             return false;
         }
 
         @Override
         public boolean isOpen() {
-        	System.out.print("### isOpen() called");
+        	logger.debug("### isOpen() called");
             if (circuitOpen.get()) {
                 // if we're open we immediately return true and don't bother attempting to 'close' ourself as that is left to allowSingleTest and a subsequent successful test to close
-            	System.out.println("### return true ==> OPEN #1");
+            	logger.debug("### return true ==> OPEN #1");
             	return true;
             }
 
@@ -217,25 +217,25 @@ public interface HystrixCircuitBreaker {
             // check if we are past the statisticalWindowVolumeThreshold
             if (health.getTotalRequests() < properties.circuitBreakerRequestVolumeThreshold().get()) {
                 // we are not past the minimum volume threshold for the statisticalWindow so we'll return false immediately and not calculate anything
-            	System.out.println("### return false ==> CLOSED #1");
+            	logger.debug("### return false ==> CLOSED #1");
             	return false;
             }
 
             if (health.getErrorPercentage() < properties.circuitBreakerErrorThresholdPercentage().get()) {
-            	System.out.println("### return false ==> CLOSED #2");
+            	logger.debug("### return false ==> CLOSED #2");
             	return false;
             } else {
                 // our failure rate is too high, trip the circuit
                 if (circuitOpen.compareAndSet(false, true)) {
                     // if the previousValue was false then we want to set the currentTime
                     circuitOpenedOrLastTestedTime.set(System.currentTimeMillis());
-                    System.out.println("### return true ==> OPEN #2");
+                    logger.debug("### return true ==> OPEN #2");
                     return true;
                 } else {
                     // How could previousValue be true? If another thread was going through this code at the same time a race-condition could have
                     // caused another thread to set it to true already even though we were in the process of doing the same
                     // In this case, we know the circuit is open, so let the other thread set the currentTime and report back that the circuit is open
-                	System.out.println("### return true ==> OPEN #3");
+                	logger.debug("### return true ==> OPEN #3");
                 	return true;
                 }
             }
@@ -246,7 +246,7 @@ public interface HystrixCircuitBreaker {
         private boolean requestHealthCheck(){
         	boolean targetStatusOk = true;     		
     		HttpGet httpGet = new HttpGet(this.properties.healthCheckUrl().toString());
-    		System.out.println("Executing request " + httpGet.getRequestLine());
+    		logger.debug("Executing request " + httpGet.getRequestLine());
     		
     		CloseableHttpClient httpClient = HttpClients.createDefault();
     		CloseableHttpResponse response = null;

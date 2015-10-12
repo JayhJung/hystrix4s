@@ -1,11 +1,11 @@
-package hello;
+package server.dependency;
 
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @RestController
-public class Controller {
+public class DependencyRestController {
 
 	int numRequest = 0;
 	
@@ -28,6 +28,12 @@ public class Controller {
     	this.numRequest=0;
     }
     
+    @RequestMapping("/healthcheck")
+    public String healthcheck() {
+    	System.out.print("health check called !!");
+        return "Health Check!!";
+    }
+    
     
 	private void giveDelay(int sec){
 		
@@ -42,6 +48,6 @@ public class Controller {
 			e.printStackTrace();
 		}
 	
-}
+	}
 
 }

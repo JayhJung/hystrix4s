@@ -2,12 +2,18 @@ package rest4s.restclient;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.net.URI;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import rest4s.config.RequestType;
 import rest4s.config.Rest4sHystrixConfiguration;
 import rest4s.config.annotation.Rest4sConf;
 
 public class Rest4s {
+	
+	private static final Logger logger = LoggerFactory.getLogger(Rest4s.class);
 
 	/**
 	 * 
@@ -17,7 +23,7 @@ public class Rest4s {
 	 * 
 	 */
 	public static String simpleGet(String url) throws Exception {
-		Rest4sHystrixConfiguration conf = Rest4s.parseAnnotations();
+		Rest4sHystrixConfiguration conf = Rest4s.parseAnnotations(url);
 		Rest4sHystrixCommand command = new Rest4sHystrixCommand(url, RequestType.GET, conf);
 		String result = command.execute();
 		
@@ -32,7 +38,7 @@ public class Rest4s {
 	 * 
 	 */
 	public static String simplePost(String url) throws Exception {
-		Rest4sHystrixConfiguration conf = Rest4s.parseAnnotations();
+		Rest4sHystrixConfiguration conf = Rest4s.parseAnnotations(url);
 		Rest4sHystrixCommand command = new Rest4sHystrixCommand(url, RequestType.POST, conf);
 		String result = command.execute();
 		
@@ -46,14 +52,14 @@ public class Rest4s {
 	 */
 	public static String callRequest(RequestSettings requestSettings) {
 
-		Rest4sHystrixConfiguration conf = Rest4s.parseAnnotations();
+		Rest4sHystrixConfiguration conf = Rest4s.parseAnnotations(requestSettings.getUrl());
 		Rest4sHystrixCommand command = new Rest4sHystrixCommand(requestSettings, conf);
 		String result = command.execute();
 		
 		return result;
 	}
 
-	private static Rest4sHystrixConfiguration parseAnnotations() {
+	private static Rest4sHystrixConfiguration parseAnnotations(String url) {
 		StackTraceElement[] stacks = new Throwable().getStackTrace();
 		Rest4sHystrixConfiguration conf = new Rest4sHystrixConfiguration();
 		if (stacks == null || stacks.length <= 1) {
@@ -79,8 +85,15 @@ public class Rest4s {
 						conf.setSleepWindowMilliSec(myAnnotation.sleepWindowMilliSec());
 						conf.setThreasholdVolume(myAnnotation.threasholdVolume());
 						conf.setThreasholdErrorPercentage(myAnnotation.threasholdErrorPercentage());
-						conf.setHealthCheckUrl(myAnnotation.healthCheckUrl());
-						System.out.println("### " + myAnnotation.timeoutMilliSec());
+						
+						String scheme = url.split("://")[0];
+						String path = url.split("://")[1];
+						String host = path.split("/")[0];						
+						String targetHost = scheme.concat("://").concat(host);						
+						conf.setHealthCheckUrl(targetHost.concat(myAnnotation.healthCheckUrl()));
+						
+						logger.debug("### target url : " + conf.getHealthCheckUrl());
+						logger.debug("### " + myAnnotation.timeoutMilliSec());
 					}
 				}
 			}

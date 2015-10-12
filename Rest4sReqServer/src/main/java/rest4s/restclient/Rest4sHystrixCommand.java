@@ -40,7 +40,7 @@ public class Rest4sHystrixCommand extends HystrixCommand<String>{
 	                       * the amount of time, after tripping the circuit, 
 	                       * to reject requests before allowing attempts again to determine 
 	                       * if the circuit should again be closed*/
-	                      .withCircuitBreakerSleepWindowInMilliseconds(15000) //5 sec
+	                      .withCircuitBreakerSleepWindowInMilliseconds(5000) //5 sec
 	                      /*
 	                       * his property, if true, forces the circuit breaker into a closed state 
 	                       * in which it will allow requests regardless of the error percentage.*/
@@ -49,7 +49,7 @@ public class Rest4sHystrixCommand extends HystrixCommand<String>{
 	                     .withExecutionTimeoutInMilliseconds(2)));
 		this.url = url;
 		this.reqType = reqType;
-		System.out.println("Contructor called!!!");
+		logger.debug("Contructor called!!!");
 	}
 	
 	public Rest4sHystrixCommand(String url, RequestType reqType, Rest4sHystrixConfiguration conf) {
@@ -67,17 +67,18 @@ public class Rest4sHystrixCommand extends HystrixCommand<String>{
 	                       * the amount of time, after tripping the circuit, 
 	                       * to reject requests before allowing attempts again to determine 
 	                       * if the circuit should again be closed*/
-	                      .withCircuitBreakerSleepWindowInMilliseconds(15000) //5 sec
+	                      .withCircuitBreakerSleepWindowInMilliseconds(5000) //5 sec
 	                      /*
 	                       * his property, if true, forces the circuit breaker into a closed state 
 	                       * in which it will allow requests regardless of the error percentage.*/
 	                      //.withCircuitBreakerForceClosed(true)
-	                      .withCircuitBreakerErrorThresholdPercentage(50)
-	                     .withExecutionTimeoutInMilliseconds(conf.getTimeOutMilliSec())));
+	                     .withCircuitBreakerErrorThresholdPercentage(50)
+	                     .withExecutionTimeoutInMilliseconds(conf.getTimeOutMilliSec())
+	                     .withHealthCheckUrl(conf.getHealthCheckUrl())));
 		this.url = url;
 	    this.reqType = reqType;
 	    this.conf = conf;
-	    System.out.println(conf.toString());
+	    logger.debug(conf.toString());
 	}
 	
 	public Rest4sHystrixCommand(RequestSettings requestSettings, Rest4sHystrixConfiguration conf) {
@@ -104,7 +105,7 @@ public class Rest4sHystrixCommand extends HystrixCommand<String>{
 	                    .withExecutionTimeoutInMilliseconds(conf.getTimeOutMilliSec())));
 		this.conf = conf;
 		this.requestSettings = requestSettings;
-		System.out.println(conf.toString());
+		logger.debug(conf.toString());
 	}
 	
 	

@@ -9,15 +9,16 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
 public @interface Rest4sConf {
-	public String fallback() default "getFallback";
+	String fallback() default "getFallback";
 	
-	public int timeoutMilliSec() default 5000;
+	int timeoutMilliSec() default 5000;
 	
-	public int sleepWindowMilliSec() default 5000;
+	int sleepWindowMilliSec() default 5000;
 	
-	public int threasholdVolume() default 10;
+	int threasholdVolume() default 10;
 	
-	public int threasholdErrorPercentage() default 50;
+	int threasholdErrorPercentage() default 50;
 	
-	public String healthCheckUrl() default "/health";
+	String healthCheckUrl() default "/health";
+	
 }
