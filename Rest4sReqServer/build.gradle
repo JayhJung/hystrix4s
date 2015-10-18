@@ -20,6 +20,10 @@ jar {
 
 repositories {
     mavenCentral()
+    
+    flatDir {
+    	dirs '../Rest4s/build/libs'
+    }
 }
 
 sourceCompatibility = 1.8
@@ -34,7 +38,8 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.0'
     testCompile("junit:junit")
     
-    runtime files('libs/Rest4s-1.0.jar')
+    //runtime files('libs/Rest4s-1.0.jar')
+    compile 'rest4s:Rest4s:1.0'
 }
 
 task wrapper(type: Wrapper) {
