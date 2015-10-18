@@ -34,7 +34,7 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.0'
     testCompile("junit:junit")
     
-    //compile project('Rest4s')
+    runtime files('libs/Rest4s-1.0.jar')
 }
 
 task wrapper(type: Wrapper) {
