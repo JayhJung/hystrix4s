@@ -26,7 +26,7 @@ public class Rest4sHystrixCommand extends HystrixCommand<String>{
 	private RequestSettings requestSettings;
 	
 	public Rest4sHystrixCommand(String url, RequestType reqType) {
-		super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(getHystrixGroupKey(url)))
+		super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(getDigestedHystrixGroupKey(url)))
 	              .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
 	                      //This property determines whether a circuit breaker will be used 
 	                      //to track health and to short-circuit requests if it trips.
@@ -53,7 +53,7 @@ public class Rest4sHystrixCommand extends HystrixCommand<String>{
 	}
 	
 	public Rest4sHystrixCommand(String url, RequestType reqType, Rest4sHystrixConfiguration conf) {
-		super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(getHystrixGroupKey(url)))
+		super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(getDigestedHystrixGroupKey(conf.getGroupKey())))
 	              .andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
 	                      //This property determines whether a circuit breaker will be used 
 	                      //to track health and to short-circuit requests if it trips.
@@ -82,7 +82,7 @@ public class Rest4sHystrixCommand extends HystrixCommand<String>{
 	}
 	
 	public Rest4sHystrixCommand(RequestSettings requestSettings, Rest4sHystrixConfiguration conf) {
-		super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(getHystrixGroupKey(requestSettings.getUrl())))
+		super(Setter.withGroupKey(HystrixCommandGroupKey.Factory.asKey(getDigestedHystrixGroupKey(conf.getGroupKey())))
 	              		.andCommandPropertiesDefaults(HystrixCommandProperties.Setter()
 	              		//This property determines whether a circuit breaker will be used 
 	                    //to track health and to short-circuit requests if it trips.
@@ -152,14 +152,14 @@ public class Rest4sHystrixCommand extends HystrixCommand<String>{
 		
 	}
 	
-	private static String getHystrixGroupKey(String url){
+	private static String getDigestedHystrixGroupKey(String groupKey){
 		StringBuffer sb = null;
 		String result = null;
 		try {
 			MessageDigest md;
 			
 			md = MessageDigest.getInstance("MD5");
-			md.update(url.getBytes()); 
+			md.update(groupKey.getBytes()); 
 			
 			byte byteData[] = md.digest();
 			sb = new StringBuffer(); 
@@ -169,7 +169,7 @@ public class Rest4sHystrixCommand extends HystrixCommand<String>{
 			
 		} catch (NoSuchAlgorithmException e) {
 			
-			result = url;
+			result = groupKey;
 		}
 		
 		result = sb.toString();

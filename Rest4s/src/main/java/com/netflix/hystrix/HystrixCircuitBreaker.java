@@ -156,7 +156,6 @@ public interface HystrixCircuitBreaker {
 
         @Override
         public boolean allowRequest() {
-//        	logger.debug("## allowRequest() Called!! currently circuite is.." +  (isOpen()?"OPEN":"CLOSED"));
             if (properties.circuitBreakerForceOpen().get()) {
             	logger.debug("properties.circuitBreakerForceOpen().get() is TRUE // return false");
                 // properties have asked us to force the circuit open so we will allow NO requests
@@ -174,41 +173,42 @@ public interface HystrixCircuitBreaker {
         }
 
         public boolean allowSingleTest() {
-        	logger.debug("## allowSingleTest() Called!!");
             long timeCircuitOpenedOrWasLastTested = circuitOpenedOrLastTestedTime.get();
             // 1) if the circuit is open
             // 2) and it's been longer than 'sleepWindow' since we opened the circuit
             if (circuitOpen.get() && System.currentTimeMillis() > timeCircuitOpenedOrWasLastTested + properties.circuitBreakerSleepWindowInMilliseconds().get()) {
-            	logger.debug("## allowSingleTest() Called!! - inside #1");
+            	logger.info("Circuit is OPEN now, and period of time - " + properties.circuitBreakerSleepWindowInMilliseconds().get() + " millisec passes.");
             	// We push the 'circuitOpenedTime' ahead by 'sleepWindow' since we have allowed one request to try.
                 // If it succeeds the circuit will be closed, otherwise another singleTest will be allowed at the end of the 'sleepWindow'.
                 if (circuitOpenedOrLastTestedTime.compareAndSet(timeCircuitOpenedOrWasLastTested, System.currentTimeMillis())) {
                     // if this returns true that means we set the time so we'll return true to allow the singleTest
                     // if it returned false it means another thread raced us and allowed the singleTest before we did
-                	logger.debug("## allowSingleTest() Called!! - inside #2 returning true");
-                	//여기서 true가 리턴되면 test용으로 single request 가 허용됩니다. 
-                	//TODO 여기에서 별도 health check를 따로 하고
-                	//결과로 circuit 을 열고/닫아주면 될 듯.
+                	
+                	/** 
+                	 * added code by rest4s for health check before send single request to the target URL. 
+                	 * 
+                	 * */
                 	boolean targetStatusOk = true;
-                	if(this.properties.healthCheckUrl() != null && !"".equals(this.properties.healthCheckUrl())) {
+                	logger.warn("healthCheckUrl property : " + this.properties.healthCheckUrl().get());
+                	if(this.properties.healthCheckUrl().get() != null && !"".equals(this.properties.healthCheckUrl().get())) {
+                		
+                		// if health check fails, update targetStatusOk to false.
                 		targetStatusOk = requestHealthCheck();
+                		logger.info("Target health check called and the result is : " + Boolean.toString(targetStatusOk).toUpperCase());
                 	}
                 	
-                	//그리고 false리턴.
-                	//return false;
                     return targetStatusOk;
                 }
             }
-            logger.debug("## allowSingleTest() Called!! - inside #3 returning false");
+            
             return false;
         }
 
         @Override
         public boolean isOpen() {
-        	logger.debug("### isOpen() called");
             if (circuitOpen.get()) {
                 // if we're open we immediately return true and don't bother attempting to 'close' ourself as that is left to allowSingleTest and a subsequent successful test to close
-            	logger.debug("### return true ==> OPEN #1");
+            	logger.debug("Currently, circuit is OPEN.");
             	return true;
             }
 
@@ -218,25 +218,24 @@ public interface HystrixCircuitBreaker {
             // check if we are past the statisticalWindowVolumeThreshold
             if (health.getTotalRequests() < properties.circuitBreakerRequestVolumeThreshold().get()) {
                 // we are not past the minimum volume threshold for the statisticalWindow so we'll return false immediately and not calculate anything
-            	logger.debug("### return false ==> CLOSED #1");
             	return false;
             }
+            logger.debug("Currently, circuit is CLOSE and total request count is over RequestVolumeThreashold.");
 
             if (health.getErrorPercentage() < properties.circuitBreakerErrorThresholdPercentage().get()) {
-            	logger.debug("### return false ==> CLOSED #2");
             	return false;
             } else {
-                // our failure rate is too high, trip the circuit
+            	logger.debug("Currently, circuit is CLOSE and the percentage error ratio is over ErrorThreasholdPercentage.");
+            	logger.debug("so that, circuit will be OPEN");
+            	// our failure rate is too high, trip the circuit
                 if (circuitOpen.compareAndSet(false, true)) {
                     // if the previousValue was false then we want to set the currentTime
                     circuitOpenedOrLastTestedTime.set(System.currentTimeMillis());
-                    logger.debug("### return true ==> OPEN #2");
                     return true;
                 } else {
                     // How could previousValue be true? If another thread was going through this code at the same time a race-condition could have
                     // caused another thread to set it to true already even though we were in the process of doing the same
                     // In this case, we know the circuit is open, so let the other thread set the currentTime and report back that the circuit is open
-                	logger.debug("### return true ==> OPEN #3");
                 	return true;
                 }
             }
@@ -251,7 +250,7 @@ public interface HystrixCircuitBreaker {
     		
     		RequestConfig requestConfig = RequestConfig.custom()
     												.setConnectTimeout(300)
-    												.setConnectionRequestTimeout(500)
+    												.setSocketTimeout(500)
     												.build();
     		httpGet.setConfig(requestConfig);
     		

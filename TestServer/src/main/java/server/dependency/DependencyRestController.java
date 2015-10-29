@@ -9,31 +9,52 @@ public class DependencyRestController {
 
 	int numRequest = 0;
 	
+	boolean latency = false;
+	
     @RequestMapping("/")
     public String index() {
-    	System.out.print("hello called:" + (++numRequest));
-    	if(numRequest > 10){
-    		System.out.println(": with delay 3 sec");
-    		giveDelay(3);
+    	System.out.println("hello called:" + (++numRequest));
+    	if(numRequest > 300 && latency == false){
+    		latency = true;
+    		System.out.println(": with delay 5 sec");
+    	}
+    	
+    	if(latency) {
+    		giveDelay(5);    
+    		
     	}else{
     		System.out.println(": no delay");
     	}
         return "Greetings from Spring Boot!";
     }
     
-
-    @RequestMapping("/reset")
-    public void resetCount() {
-    	System.out.println("Number of count reset !");
-    	this.numRequest=0;
-    }
-    
     @RequestMapping("/healthcheck")
-    public String healthcheck() {
-    	System.out.print("health check called !!");
+    public String healthcheckWithLatency() {
+    	System.out.println("health check with latency called !!");
+    	
+    	if(latency) {
+    		giveDelay(5);    
+    		
+    	}else{
+    		System.out.println(": health check with no delay");
+    	}
+    	
         return "Health Check!!";
     }
     
+    @RequestMapping("/health")
+    public String healthcheck() {
+    	System.out.println("health check called !!");
+    	
+        return "Health Check!!";
+    }
+    
+    @RequestMapping("/reset")
+    public String reset() {
+    	System.out.println("reset called!!");
+    	numRequest = 0;
+        return "reset";
+    }
     
 	private void giveDelay(int sec){
 		

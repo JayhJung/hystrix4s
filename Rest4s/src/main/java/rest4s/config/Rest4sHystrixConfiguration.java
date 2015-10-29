@@ -8,6 +8,7 @@ public class Rest4sHystrixConfiguration {
 	private int threasholdVolume = 10;
 	private int threasholdErrorPercentage = 50;
 	private String healthCheckUrl = null;
+	private String groupKey = null;
 	
 	private Class<?> callerClass = null;
 	
@@ -54,14 +55,21 @@ public class Rest4sHystrixConfiguration {
 	public void setCallerClass(Class<?> callerClass) {
 		this.callerClass = callerClass;
 	}
-	
+	public String getGroupKey() {
+		return groupKey;
+	}
+	public void setGroupKey(String groupKey) {
+		this.groupKey = groupKey;
+	}
 	@Override
 	public String toString() {
-		return "Rest4sConfiguration [fallbackMethodName=" + fallbackMethodName
-				+ ", timeOutMilliSec=" + timeOutMilliSec + ", callerClass=" + callerClass
-				+ ", sleepWindowMilliSec=" + sleepWindowMilliSec + ", threasholdVolume=" + threasholdVolume
-				+ ", threasholdErrorPercentage=" + threasholdErrorPercentage + ", healthCheckUrl=" + healthCheckUrl
-				+ "]";
+		return "Rest4sHystrixConfiguration [fallbackMethodName="
+				+ fallbackMethodName + ", timeOutMilliSec=" + timeOutMilliSec
+				+ ", sleepWindowMilliSec=" + sleepWindowMilliSec
+				+ ", threasholdVolume=" + threasholdVolume
+				+ ", threasholdErrorPercentage=" + threasholdErrorPercentage
+				+ ", healthCheckUrl=" + healthCheckUrl + ", groupKey="
+				+ groupKey + ", callerClass=" + callerClass + "]";
 	}
 	
 	

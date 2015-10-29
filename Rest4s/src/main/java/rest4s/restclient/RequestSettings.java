@@ -110,7 +110,7 @@ public class RequestSettings {
 	 * @param method
 	 * @return RequestSettings
 	 */
-	public RequestSettings method(String method) {
+	public RequestSettings httpRequestMethod(String method) {
 		
 		this.setHttpRequestMethod(method);
 		
@@ -133,7 +133,7 @@ public class RequestSettings {
 	 * @param value
 	 * @return void
 	 */
-	public void addHeader(String key, String value) {
+	public void setHeader(String key, String value) {
 		
 		if((key != null && !"".equals(key)) && (value != null && !"".equals(value))) {
 			
@@ -155,7 +155,7 @@ public class RequestSettings {
 	 * @return RequestSettings
 	 */
 	public RequestSettings header(String key, String value) {
-		this.addHeader(key, value);
+		this.setHeader(key, value);
 		
 		return this;
 	}
@@ -197,7 +197,7 @@ public class RequestSettings {
 	 * @param headers
 	 * @return void
 	 */
-	public void addHeaders(Map<String, String> headers) {
+	public void setHeaders(Map<String, String> headers) {
 		if(!headers.isEmpty()) {
 			for(String key : headers.keySet()) {
 				Header header = new BasicHeader(key, headers.get(key));
@@ -218,7 +218,7 @@ public class RequestSettings {
 	 * @return RequestSettings
 	 */
 	public RequestSettings headers(Map<String, String> headers) {
-		this.addHeaders(headers);
+		this.setHeaders(headers);
 		
 		return this;
 	}
@@ -230,7 +230,7 @@ public class RequestSettings {
 	 * @param value
 	 * @return void
 	 */
-	public void addCookie(String key, String value) {
+	public void setCookie(String key, String value) {
 		if(this.cookieStore == null) {
 			this.cookieStore = new BasicCookieStore();
 		}
@@ -254,7 +254,7 @@ public class RequestSettings {
 	 * @return RequestSettings
 	 */
 	public RequestSettings cookie(String key, String value) {
-		this.addCookie(key, value);
+		this.setCookie(key, value);
 		
 		return this;
 	}
@@ -265,7 +265,7 @@ public class RequestSettings {
 	 * @param cookies
 	 * @return void
 	 */
-	public void addCookies(Map<String, String> cookies) {
+	public void setCookies(Map<String, String> cookies) {
 		if(this.cookieStore == null) {
 			cookieStore = new BasicCookieStore();
 		}
@@ -290,7 +290,7 @@ public class RequestSettings {
 	 * @return RequestSettings
 	 */
 	public RequestSettings cookies(Map<String, String> cookies) {
-		this.addCookies(cookies);
+		this.setCookies(cookies);
 		
 		return this;
 	}
@@ -391,6 +391,13 @@ public class RequestSettings {
 		// need URLEncoding ??
 		this.queryParameterString = wholeQueryParameterString;
 		
+	}
+	
+	
+	public RequestSettings queryParameterString(String wholeQueryParameterString) {
+		setQueryParameterString(wholeQueryParameterString);
+		
+		return this;
 	}
 	
 	public String getQueryParameterString() {
